@@ -29,7 +29,7 @@ public class MavenJunitTestClass {
         capabilities.setCapability(CapabilityType.PLATFORM, "Android");
         capabilities.setCapability(MobileCapabilityType.UDID, "192.168.56.101:5555");
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "EmulatorS7");
-        capabilities.setCapability(MobileCapabilityType.NO_RESET, "true");
+        capabilities.setCapability(MobileCapabilityType.NO_RESET, "false");
         capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, "600");
 
         //this path is Relative to the project directory path: src/main/resources/yamba-debug.apk
@@ -79,7 +79,7 @@ public class MavenJunitTestClass {
 
         //find & click username label element
         String usernameOrPasswordLabelId = "title";
-        //the index of the username elemnt is 0, the index of the password element is 1
+        //the index of the username element is 0, the index of the password element is 1
         int usernameLabelElementIndex = 0;
         //retrieve the username label element from index usernameLabelElementIndex
         MobileElement usernameLabelElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordLabelId).get(usernameLabelElementIndex);
@@ -89,13 +89,17 @@ public class MavenJunitTestClass {
 
         //retrieve the text from the username text
         String usernameOrPasswordTextValueId = "edit";
-        MobileElement usernameTextValueElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordTextValueId).get(usernameLabelElementIndex);
+        MobileElement usernameTextElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordTextValueId).get(usernameLabelElementIndex);
         //save the text value as actual value in a String
-        String actualUsernameTextValue = usernameTextValueElement.getText();
+        String actualUsernameTextValue = usernameTextElement.getText();
         //print to the console the actual username text value and verify it is
         System.out.println("The username value from screen is: " + actualUsernameTextValue);
         String expectedValue = "";
         Assert.assertEquals("Username actual text value is not as expected", expectedValue, actualUsernameTextValue);
+
+        //type in the username = student password and wait 1 second
+        usernameTextElement.sendKeys("student");
+        Thread.sleep(1000);
 
         //click on OK button
         String okButtonId = "button1";

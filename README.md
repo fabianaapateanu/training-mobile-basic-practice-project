@@ -24,9 +24,8 @@ The test user for this app is:
 * password = `password`
 
 ## Test scenario
-
 As a test scenario in the Yamba application we will want to:
-   1. Start the Yamba application
+   1. Start the Yamba application fresh, the application has no user logged in
    2. Tap the `More options` button
    
       ![Alt text](screenshots/MoreOptionsBtn.png?raw=true)
@@ -42,22 +41,27 @@ As a test scenario in the Yamba application we will want to:
         ![Alt text](screenshots/TapUsername.png?raw=true)     
    6. Retrieve the text from username
    
+        ![Alt text](screenshots/EmptyUsername.png?raw=true)
+   7. Verify the username text has a specific value. This value should be empty because the user is not logged in.
+   8. Type in the value for username = student 
+   
         ![Alt text](screenshots/UsernameText.png?raw=true)
-   7. Verify the username text has a specific value. This can be empty if no username has been logged in, or the value of the username which has been used for login.
-   8. Tap on OK button in order to close the User Name dialog
+   9. Tap on OK button in order to close the User Name dialog
    
         ![Alt text](screenshots/OkButton.png?raw=true)
-   9. Verify the OK button is not displayed anymore
-   10. Close the application
-   
+   10. Verify the OK button is not displayed anymore
+   11. Close the application
+
+The automated test scenarios described below is assuming that the application is not logged in.
+
 ## Test class
 We will make use of JUnit test framework capabilities and will use 3 types of methods in our test class:
 
 * Test setup method - annotated with `@Before` - a method which is executed before the test itself gets executed
-* Test teardown method - annotated with `@After` - a method which is executed after the test itself gets executed
+* Test teardown method - annotated with `@After` - a method which is executed after the test itself finishes execution
 * Test method - annotated with `@Test` - a method which represents the automated test scenario
 
-1. Create a JUnit setUp method which is annotated with `@Before`
+1. Create a JUnit setup method which is annotated with `@Before`
     1. First we need to import:
         `import org.junit.Before;`
         
@@ -76,7 +80,9 @@ We will make use of JUnit test framework capabilities and will use 3 types of me
         ```
         The setUp method will also throw an exception of type `MalformedURLException` because this is the one needed by the Java `URL` object constructor.
         
-    4. In this method we will start the android driver session for our application:
+    4. In this method we will start the android driver session for our application, meaning details of the appium server and the desired capabilities:
+       :exclamation: Please be careful to notice that we will set the `noReset` capability set to `false` in order for the application to start fresh, not logged in.
+        
         ```
             @Before
             public void setUp() throws MalformedURLException {
@@ -87,7 +93,7 @@ We will make use of JUnit test framework capabilities and will use 3 types of me
             capabilities.setCapability(CapabilityType.PLATFORM, "Android");
             capabilities.setCapability(MobileCapabilityType.UDID, "192.168.56.101:5555");
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "EmulatorS7");
-            capabilities.setCapability(MobileCapabilityType.NO_RESET, "true");
+            capabilities.setCapability(MobileCapabilityType.NO_RESET, "false");
             capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, "600");
     
             //this path is Relative to the project directory path: src/main/resources/yamba-debug.apk
@@ -104,11 +110,12 @@ We will make use of JUnit test framework capabilities and will use 3 types of me
             androidDriver = new AndroidDriver(serverUrl, capabilities);
             }
         ```
-
-2. Create a JUnit tearDown method which is annotated with `@After`:
+       
+         
+2. Create a JUnit teardown method which is annotated with `@After`:
     1. First we need to import:
         `import org.junit.After;`
-    2. After the setUp we will add the annotation and the method name for tearDown:
+    2. After the `setUp()` method which we previously added, we will add the annotation and the method name for tearDown:
         ```
            @After
            public void tearDown() { 
@@ -128,10 +135,10 @@ We will make use of JUnit test framework capabilities and will use 3 types of me
         public void testSettings() throws InterruptedException { 
         }
     ```
-    The test method will also throw an exception of type `InterruptedException` because this is the one needed by the Java `Thread.sleep(1000)` method.
+    The test method will also throw an exception of type `InterruptedException` because this is the one needed by the Java `Thread.sleep()` method.
     
 ## Test method
-The test method needs to implement all the test steps from the above described test scenario.
+The test method needs to implement all the test steps from the above described scenario.
 
 1. Start the Yamba application - this is currently happening in our `setUp()` method, where we start the android session
 2. Tap the `More options` button - now we write in the test method:
@@ -147,7 +154,7 @@ The test method needs to implement all the test steps from the above described t
         //wait for 1500 milliseconds which is 1.5 seconds
         Thread.sleep(1500);
     ```
-    We have added the use of a wait method, `Thread.sleep(1500)`, which creates a pause of 1500 milliseconds in execution, in order to make sure all elements 
+    We have added the use of a wait method, `Thread.sleep(1500)`, which creates a pause of 1500 milliseconds = 1.5 seconds in execution, in order to make sure all elements 
     are loaded properly after click.
 3. Tap the `Settings` button - continue to write in the test method:
     1. Identify the `Settings` element locator with Appium Inspector
@@ -160,7 +167,7 @@ The test method needs to implement all the test steps from the above described t
         //wait for 1500 milliseconds which is 1.5 seconds
         Thread.sleep(1500);
     ```
-    We have added the use of a wait method, `Thread.sleep(1500)`, which creates a pause of 1500 milliseconds in execution, in order to make sure all elements 
+    We have added the use of a wait method, `Thread.sleep(1500)`, which creates a pause of 1.5 seconds in execution in execution, in order to make sure all elements 
     are loaded properly after click.
 4. Verify we landed on the Settings screen, meaning the `Back` button is displayed:
     1. Identify the `Back` button locator with Appium Inspector
@@ -173,7 +180,7 @@ The test method needs to implement all the test steps from the above described t
         //wait for 1500 milliseconds which is 1.5 seconds
         Thread.sleep(1500);
     ```
-     We have added the use of a wait method, `Thread.sleep(1500)`, which creates a pause of 1500 milliseconds in execution, in order to make sure all elements 
+     We have added the use of a wait method, `Thread.sleep(1500)`, which creates a pause of 1.5 seconds in execution, in order to make sure all elements 
      are loaded properly after click.
 5. Tap on the User Name field
     1. Identify the `User Name` label element locator with Appium Inspector
@@ -187,7 +194,7 @@ The test method needs to implement all the test steps from the above described t
     ```
         //find & click username label element
         String usernameOrPasswordLabelId = "title";
-        //the index of the username elemnt is 0, the index of the password element is 1
+        //the index of the username element is 0, the index of the password element is 1
         int usernameLabelElementIndex = 0;
         //retrieve the username label element from index usernameLabelElementIndex
         MobileElement usernameLabelElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordLabelId).get(usernameLabelElementIndex);
@@ -199,16 +206,16 @@ The test method needs to implement all the test steps from the above described t
         Thread.sleep(1000);
     ```
 6. Retrieve the text from username:
-    1. Identify the text field element locator with Appium Inspector
+    1. Identify the username text field element locator with Appium Inspector
     2. Find the element, retrieve the text value from it and save it as a String value:
     ```
         //retrieve the text from the username text
         String usernameOrPasswordTextValueId = "edit";
-        MobileElement usernameTextValueElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordTextValueId).get(usernameLabelElementIndex);
+        MobileElement usernameTextElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordTextValueId).get(usernameLabelElementIndex);
         //save the text value as actual value in a String
-        String actualUsernameTextValue = usernameTextValueElement.getText();
+        String actualUsernameTextValue = usernameTextElement.getText();
     ```
-7. Verify the username text has a specific value. This can be empty if no username has been logged in, or the value of the username which has been used for login:
+7. Verify the username text has a specific value. This value should be empty because the user is not logged in:
     1. The text value retrieved form the username text field is the actual value which we see on the screen
     2. The expected value needs to be compared with the actual value - because we did not perform the login, the expected value is the empty String `""`:
      ```
@@ -217,8 +224,16 @@ The test method needs to implement all the test steps from the above described t
         String expectedValue = "";
         Assert.assertEquals("Username actual text value is not as expected", expectedValue, actualUsernameTextValue);
      ```
-8. Tap on OK button in order to close the User Name dialog
-    1. Identify the `OK` button element with Appium Inspector
+8. Type in the value for username = student:
+    1. The text element is already identified, we just use it for typing in the text value
+    2. Type in the username value and wait 1 second:
+    ```
+        //type in the username = student password and wait 1 second
+        usernameTextElement.sendKeys("student");
+        Thread.sleep(1000);
+    ```
+9. Tap on OK button in order to close the User Name dialog
+    1. Identify the `OK` button element locator with Appium Inspector
     2. Find the element, click on it and wait for 1 second:
     ```
         //click on OK button
@@ -227,14 +242,14 @@ The test method needs to implement all the test steps from the above described t
         okButtonElement.click();
         Thread.sleep(1000);
     ```
-9. Verify the OK button is not displayed anymore
+10. Verify the OK button is not displayed anymore
     1. The `OK` button element is already identified, we just need to verify its displayed attribute is false, with an assertion method:
     ```
         //verify OK button is not displayed anymore
         boolean isOkButtonDisplayed = okButtonElement.isDisplayed();
         Assert.assertFalse("The OK button is still displayed", isOkButtonDisplayed);
     ```
-10. Close the application - this is already done the in `tearDown()` method where we close the session.
+11. Close the application - this is already done the in `tearDown()` method where we close the session.
 
 ## Run the test method
 Make sure the Appium server at localhost is running, started through Appium desktop app.
