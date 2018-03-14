@@ -17,7 +17,7 @@ public class MavenJunitTestClass {
     public AndroidDriver androidDriver;
 
     /**
-     * Starts the android session with the given appium server and capabilties
+     * Starts the android session with the given appium server and capabilities
      *
      * @throws MalformedURLException
      */
@@ -44,7 +44,6 @@ public class MavenJunitTestClass {
         capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, "com.example.android.yamba.MainActivity");
 
         androidDriver = new AndroidDriver(serverUrl, capabilities);
-        androidDriver.resetApp();
     }
 
     /**
@@ -78,28 +77,32 @@ public class MavenJunitTestClass {
         //wait for 1500 milliseconds which is 1.5 seconds
         Thread.sleep(1500);
 
-        //declare all element locators which will be used
+        //find & click username label element
         String usernameOrPasswordLabelId = "title";
+        //the index of the username elemnt is 0, the index of the password element is 1
         int usernameLabelElementIndex = 0;
-        int passwordLabelElementIndex = 1;
-        String usernameOrPasswordTextValueId = "edit";
-        String okButtonId = "button1";
-
+        //retrieve the username label element from index usernameLabelElementIndex
         MobileElement usernameLabelElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordLabelId).get(usernameLabelElementIndex);
         //click the username label element & wait 1 second
         usernameLabelElement.click();
         Thread.sleep(1000);
 
         //retrieve the text from the username text
+        String usernameOrPasswordTextValueId = "edit";
         MobileElement usernameTextValueElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordTextValueId).get(usernameLabelElementIndex);
+        //save the text value as actual value in a String
         String actualUsernameTextValue = usernameTextValueElement.getText();
-        //print to the console the username text value and verify it is
+        //print to the console the actual username text value and verify it is
         System.out.println("The username value from screen is: " + actualUsernameTextValue);
-        Assert.assertEquals("Not the same", "student", actualUsernameTextValue);
+        String expectedValue = "";
+        Assert.assertEquals("Username actual text value is not as expected", expectedValue, actualUsernameTextValue);
 
         //click on OK button
+        String okButtonId = "button1";
         MobileElement okButtonElement = (MobileElement) androidDriver.findElementById(okButtonId);
         okButtonElement.click();
+        Thread.sleep(1000);
+
         //verify OK button is not displayed anymore
         boolean isOkButtonDisplayed = okButtonElement.isDisplayed();
         Assert.assertFalse("The OK button is still displayed", isOkButtonDisplayed);

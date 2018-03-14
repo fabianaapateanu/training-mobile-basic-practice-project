@@ -45,6 +45,8 @@ As a test scenario in the Yamba application we will want to:
         ![Alt text](screenshots/UsernameText.png?raw=true)
    7. Verify the username text has a specific value. This can be empty if no username has been logged in, or the value of the username which has been used for login.
    8. Tap on OK button in order to close the User Name dialog
+   
+        ![Alt text](screenshots/OkButton.png?raw=true)
    9. Verify the OK button is not displayed anymore
    10. Close the application
    
@@ -162,7 +164,7 @@ The test method needs to implement all the test steps from the above described t
     are loaded properly after click.
 4. Verify we landed on the Settings screen, meaning the `Back` button is displayed:
     1. Identify the `Back` button locator with Appium Inspector
-    2. Find the element and verify its displayed attribute with an assertion method:
+    2. Find the element and verify its displayed attribute is true, with an assertion method:
     ```
         //verify Back button is displayed
         MobileElement backButtonElement = (MobileElement) androidDriver.findElementByAccessibilityId("Navigate up");
@@ -174,26 +176,65 @@ The test method needs to implement all the test steps from the above described t
      We have added the use of a wait method, `Thread.sleep(1500)`, which creates a pause of 1500 milliseconds in execution, in order to make sure all elements 
      are loaded properly after click.
 5. Tap on the User Name field
-    1. Identify the `User Name` label element with Appium Inspector
-    2. Find the element, click on it and wait for 1.5 seconds:
+    1. Identify the `User Name` label element locator with Appium Inspector
+        * This will be the `resource-id` = `title` which is the same as for Password label 
+        * This means that we can identify a list of elements by using the `id` = `title`, a list of size 2
+        * We can  uniquely identify the `User Name` label element by:
+            * Retrieving from the list the element from index 0
+        * We can  uniquely identify the `Password` label element by:
+            * Retrieving from the list the element from index 1 
+    2. Find the element list, retrieve the element from index 0:
     ```
+        //find & click username label element
+        String usernameOrPasswordLabelId = "title";
+        //the index of the username elemnt is 0, the index of the password element is 1
+        int usernameLabelElementIndex = 0;
+        //retrieve the username label element from index usernameLabelElementIndex
+        MobileElement usernameLabelElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordLabelId).get(usernameLabelElementIndex);
+    ```
+    3. Click on it and wait for 1 second:
+    ```
+        //click the username label element & wait 1 second
+        usernameLabelElement.click();
+        Thread.sleep(1000);
     ```
 6. Retrieve the text from username:
-    1. Identify the text field element with Appium Inspector
+    1. Identify the text field element locator with Appium Inspector
     2. Find the element, retrieve the text value from it and save it as a String value:
     ```
+        //retrieve the text from the username text
+        String usernameOrPasswordTextValueId = "edit";
+        MobileElement usernameTextValueElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordTextValueId).get(usernameLabelElementIndex);
+        //save the text value as actual value in a String
+        String actualUsernameTextValue = usernameTextValueElement.getText();
     ```
 7. Verify the username text has a specific value. This can be empty if no username has been logged in, or the value of the username which has been used for login:
-    1. The text value retrieved form the username text field is the actual value which we see on the screen.
-    2. The expected value needs to be also added
-    
+    1. The text value retrieved form the username text field is the actual value which we see on the screen
+    2. The expected value needs to be compared with the actual value - because we did not perform the login, the expected value is the empty String `""`:
+     ```
+        //print to the console the actual username text value and verify it is
+        System.out.println("The username value from screen is: " + actualUsernameTextValue);
+        String expectedValue = "";
+        Assert.assertEquals("Username actual text value is not as expected", expectedValue, actualUsernameTextValue);
+     ```
 8. Tap on OK button in order to close the User Name dialog
     1. Identify the `OK` button element with Appium Inspector
-    2. Find the element, click on it and wait for 1.5 seconds:
+    2. Find the element, click on it and wait for 1 second:
     ```
+        //click on OK button
+        String okButtonId = "button1";
+        MobileElement okButtonElement = (MobileElement) androidDriver.findElementById(okButtonId);
+        okButtonElement.click();
+        Thread.sleep(1000);
     ```
 9. Verify the OK button is not displayed anymore
-10. Close the application
+    1. The `OK` button element is already identified, we just need to verify its displayed attribute is false, with an assertion method:
+    ```
+        //verify OK button is not displayed anymore
+        boolean isOkButtonDisplayed = okButtonElement.isDisplayed();
+        Assert.assertFalse("The OK button is still displayed", isOkButtonDisplayed);
+    ```
+10. Close the application - this is already done the in `tearDown()` method where we close the session.
 
 ## Run the test method
 Make sure the Appium server at localhost is running, started through Appium desktop app.
