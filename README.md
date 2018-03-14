@@ -81,7 +81,7 @@ We will make use of JUnit test framework capabilities and will use 3 types of me
         The setUp method will also throw an exception of type `MalformedURLException` because this is the one needed by the Java `URL` object constructor.
         
     4. In this method we will start the android driver session for our application, meaning details of the appium server and the desired capabilities:
-       :exclamation: Please be careful to notice that we will set the `noReset` capability set to `false` in order for the application to start fresh, not logged in.
+    :exclamation: Please be careful to notice that we will set the `noReset` capability to `false` in order for the application to start fresh, not logged in.
         
         ```
             @Before
@@ -135,7 +135,7 @@ We will make use of JUnit test framework capabilities and will use 3 types of me
         public void testSettings() throws InterruptedException { 
         }
     ```
-    The test method will also throw an exception of type `InterruptedException` because this is the one needed by the Java `Thread.sleep()` method.
+     :exclamation: The test method will also throw an exception of type `InterruptedException` because this is the one needed by the Java `Thread.sleep()` method.
     
 ## Test method
 The test method needs to implement all the test steps from the above described scenario.
@@ -154,7 +154,7 @@ The test method needs to implement all the test steps from the above described s
         //wait for 1500 milliseconds which is 1.5 seconds
         Thread.sleep(1500);
     ```
-    We have added the use of a wait method, `Thread.sleep(1500)`, which creates a pause of 1500 milliseconds = 1.5 seconds in execution, in order to make sure all elements 
+    :exclamation: We have added the use of a wait method, `Thread.sleep(1500)`, which creates a pause of 1500 milliseconds = 1.5 seconds in execution, in order to make sure all elements 
     are loaded properly after click.
 3. Tap the `Settings` button - continue to write in the test method:
     1. Identify the `Settings` element locator with Appium Inspector
@@ -251,6 +251,125 @@ The test method needs to implement all the test steps from the above described s
     ```
 11. Close the application - this is already done the in `tearDown()` method where we close the session.
 
+## Complete Test Class
+
+```
+import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.remote.AndroidMobileCapabilityType;
+import io.appium.java_client.remote.MobileCapabilityType;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+public class MavenJunitTestClass {
+    public AndroidDriver androidDriver;
+
+    /**
+     * Starts the android session with the given appium server and capabilities
+     *
+     * @throws MalformedURLException
+     */
+    @Before
+    public void setUp() throws MalformedURLException {
+        URL serverUrl = new URL("http://127.0.0.1:4723/wd/hub/");
+
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability(CapabilityType.PLATFORM, "Android");
+        capabilities.setCapability(MobileCapabilityType.UDID, "192.168.56.101:5555");
+        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "EmulatorS7");
+        capabilities.setCapability(MobileCapabilityType.NO_RESET, "false");
+        capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, "600");
+
+        //this path is Relative to the project directory path: src/main/resources/yamba-debug.apk
+        //in order to use this copy paste the yamba-debug.apk in src/main/resources/
+        //otherwise, copy paste here the full path from File Explorer to the yamba-debug.apk, including the name of the file itself yamba-debug.apk
+        String appPath = System.getProperty("user.dir") +
+                File.separator + "src" + File.separator + "main" +
+                File.separator + "resources" + File.separator + "yamba-debug.apk";
+
+        capabilities.setCapability(MobileCapabilityType.APP, appPath);
+        capabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, "com.example.android.yamba");
+        capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, "com.example.android.yamba.MainActivity");
+
+        androidDriver = new AndroidDriver(serverUrl, capabilities);
+    }
+
+    /**
+     * Close the session opened with Android driver
+     */
+    @After
+    public void tearDown() {
+        //Closes the session
+        androidDriver.quit();
+    }
+
+    @Test
+    public void testSettings() throws InterruptedException {
+        //click on More Options
+        MobileElement moreOptionsElement = (MobileElement) androidDriver.findElementByAccessibilityId("More options");
+        moreOptionsElement.click();
+        //wait for 1500 milliseconds which is 1.5 seconds
+        Thread.sleep(1500);
+
+        //click on Settings
+        String settingsButtonXpath = "/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.ListView/android.widget.LinearLayout[2]/android.widget.RelativeLayout/android.widget.TextView";
+        MobileElement settingsElement = (MobileElement) androidDriver.findElementByXPath(settingsButtonXpath);
+        settingsElement.click();
+        //wait for 1500 milliseconds which is 1.5 seconds
+        Thread.sleep(1500);
+
+        //verify Back button is displayed
+        MobileElement backButtonElement = (MobileElement) androidDriver.findElementByAccessibilityId("Navigate up");
+        boolean isBackButtonDisplayed = backButtonElement.isDisplayed();
+        Assert.assertTrue("The back button is not displayed", isBackButtonDisplayed);
+        //wait for 1500 milliseconds which is 1.5 seconds
+        Thread.sleep(1500);
+
+        //find & click username label element
+        String usernameOrPasswordLabelId = "title";
+        //the index of the username element is 0, the index of the password element is 1
+        int usernameLabelElementIndex = 0;
+        //retrieve the username label element from index usernameLabelElementIndex
+        MobileElement usernameLabelElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordLabelId).get(usernameLabelElementIndex);
+        //click the username label element & wait 1 second
+        usernameLabelElement.click();
+        Thread.sleep(1000);
+
+        //retrieve the text from the username text
+        String usernameOrPasswordTextValueId = "edit";
+        MobileElement usernameTextElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordTextValueId).get(usernameLabelElementIndex);
+        //save the text value as actual value in a String
+        String actualUsernameTextValue = usernameTextElement.getText();
+        //print to the console the actual username text value and verify it is
+        System.out.println("The username value from screen is: " + actualUsernameTextValue);
+        String expectedValue = "";
+        Assert.assertEquals("Username actual text value is not as expected", expectedValue, actualUsernameTextValue);
+
+        //type in the username = student password and wait 1 second
+        usernameTextElement.sendKeys("student");
+        Thread.sleep(1000);
+
+        //click on OK button
+        String okButtonId = "button1";
+        MobileElement okButtonElement = (MobileElement) androidDriver.findElementById(okButtonId);
+        okButtonElement.click();
+        Thread.sleep(1000);
+
+        //verify OK button is not displayed anymore
+        boolean isOkButtonDisplayed = okButtonElement.isDisplayed();
+        Assert.assertFalse("The OK button is still displayed", isOkButtonDisplayed);
+    }
+}
+```
+
 ## Run the test method
 Make sure the Appium server at localhost is running, started through Appium desktop app.
 
@@ -259,7 +378,7 @@ therefore it is enough to:
     * Right click on the test method name and select `Run` option
 
 The test will start running, and the app will start on the emulator/device
-    
+
 ## Practice, practice :exclamation: :sweat:
 
 1.  Implement the following test steps in the current test method:
