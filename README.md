@@ -52,7 +52,7 @@ As a test scenario in the Yamba application we will want to:
    10. Verify the OK button is not displayed anymore
    11. Close the application
 
-The automated test scenarios described below is assuming that the application is not logged in.
+The automated test scenario implemented below is assuming that the application is not logged in.
 
 ## Test class
 We will make use of JUnit test framework capabilities and will use 3 types of methods in our test class:
