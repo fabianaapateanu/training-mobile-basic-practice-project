@@ -23,6 +23,7 @@ public class MavenJunitTestClass {
      */
     @Before
     public void setUp() throws MalformedURLException {
+        System.out.println("Starting the Android Driver session in setUp method");
         URL serverUrl = new URL("http://127.0.0.1:4723/wd/hub/");
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -44,6 +45,7 @@ public class MavenJunitTestClass {
         capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, "com.example.android.yamba.MainActivity");
 
         androidDriver = new AndroidDriver(serverUrl, capabilities);
+        System.out.println("Android Driver session started successfully in setUp method");
     }
 
     /**
@@ -51,12 +53,15 @@ public class MavenJunitTestClass {
      */
     @After
     public void tearDown() {
+        System.out.println("Trying to close Android Driver session in tearDown method");
         //Closes the session
         androidDriver.quit();
+        System.out.println("Android Driver session closed successfully in tearDown method");
     }
 
     @Test
     public void testSettings() throws InterruptedException {
+        System.out.println("Starting the test method execution");
         //click on More Options
         MobileElement moreOptionsElement = (MobileElement) androidDriver.findElementByAccessibilityId("More options");
         moreOptionsElement.click();
@@ -110,5 +115,6 @@ public class MavenJunitTestClass {
         //verify OK button is not displayed anymore
         boolean isOkButtonDisplayed = okButtonElement.isDisplayed();
         Assert.assertFalse("The OK button is still displayed", isOkButtonDisplayed);
+        System.out.println("Finished the test method execution");
     }
 }

@@ -86,7 +86,7 @@ We will make use of JUnit test framework capabilities and will use 3 types of me
         ```
             @Before
             public void setUp() throws MalformedURLException {
-             
+            System.out.println("Starting the Android Driver session in setUp method");
             URL serverUrl = new URL("http://127.0.0.1:4723/wd/hub/");
     
             DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -108,6 +108,7 @@ We will make use of JUnit test framework capabilities and will use 3 types of me
             capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, "com.example.android.yamba.MainActivity");
     
             androidDriver = new AndroidDriver(serverUrl, capabilities);
+            System.out.println("Android Driver session started successfully in setUp method");
             }
         ```
        
@@ -124,8 +125,11 @@ We will make use of JUnit test framework capabilities and will use 3 types of me
     3. In this method we will close the android driver session:
         ```
            @After
-           public void tearDown() { 
+           public void tearDown() {
+                System.out.println("Trying to close Android Driver session in tearDown method");
+                //Closes the session
                 androidDriver.quit();
+                System.out.println("Android Driver session closed successfully in tearDown method");
            }
         ```
 
@@ -147,6 +151,7 @@ The test method needs to implement all the test steps from the above described s
     ```
         @Test
         public void testSettings() throws InterruptedException {
+        System.out.println("Starting the test method execution");
         //click on More Options
         MobileElement moreOptionsElement = (MobileElement) androidDriver.findElementByAccessibilityId("More options");
         moreOptionsElement.click();
@@ -248,6 +253,7 @@ The test method needs to implement all the test steps from the above described s
         //verify OK button is not displayed anymore
         boolean isOkButtonDisplayed = okButtonElement.isDisplayed();
         Assert.assertFalse("The OK button is still displayed", isOkButtonDisplayed);
+        System.out.println("Finished the test method execution");
     ```
 11. Close the application - this is already done the in `tearDown()` method where we close the session.
 
@@ -279,6 +285,7 @@ public class MavenJunitTestClass {
      */
     @Before
     public void setUp() throws MalformedURLException {
+        System.out.println("Starting the Android Driver session in setUp method");
         URL serverUrl = new URL("http://127.0.0.1:4723/wd/hub/");
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -300,6 +307,7 @@ public class MavenJunitTestClass {
         capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, "com.example.android.yamba.MainActivity");
 
         androidDriver = new AndroidDriver(serverUrl, capabilities);
+        System.out.println("Android Driver session started successfully in setUp method");
     }
 
     /**
@@ -307,12 +315,15 @@ public class MavenJunitTestClass {
      */
     @After
     public void tearDown() {
+        System.out.println("Trying to close Android Driver session in tearDown method");
         //Closes the session
         androidDriver.quit();
+        System.out.println("Android Driver session closed successfully in tearDown method");
     }
 
     @Test
     public void testSettings() throws InterruptedException {
+        System.out.println("Starting the test method execution");
         //click on More Options
         MobileElement moreOptionsElement = (MobileElement) androidDriver.findElementByAccessibilityId("More options");
         moreOptionsElement.click();
@@ -366,6 +377,7 @@ public class MavenJunitTestClass {
         //verify OK button is not displayed anymore
         boolean isOkButtonDisplayed = okButtonElement.isDisplayed();
         Assert.assertFalse("The OK button is still displayed", isOkButtonDisplayed);
+        System.out.println("Finished the test method execution");
     }
 }
 ```
@@ -387,4 +399,12 @@ The test will start running, and the app will start on the emulator/device
     2. Verify password text has a specific value. This can be empty if no password has been filled, or the value of the password which has been used.
     3. Tap on OK button in order to close the Password dialog
     4. Verify the OK button is not displayed anymore
-     
+
+If you managed in a timely manner to implement the above steps, please also do the following:
+
+2. Navigate with Back and try to post a message
+    
+    1. Tap on the Back button - you should reach the Yamba app home page
+    2. Tap on Post button
+    3. Type in text which should be posted 
+    4. Type OK button
