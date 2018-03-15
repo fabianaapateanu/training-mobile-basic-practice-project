@@ -94,8 +94,7 @@ public class MavenJunitTestClass {
 
         //retrieve the text from the username text
         String usernameOrPasswordTextValueId = "edit";
-        MobileElement usernameTextElement = (MobileElement) androidDriver.findElementsById(usernameOrPasswordTextValueId).get(usernameLabelElementIndex);
-        //save the text value as actual value in a String
+        MobileElement usernameTextElement = (MobileElement) androidDriver.findElementById(usernameOrPasswordTextValueId);
         String actualUsernameTextValue = usernameTextElement.getText();
         //print to the console the actual username text value and verify it is
         System.out.println("The username value from screen is: " + actualUsernameTextValue);
